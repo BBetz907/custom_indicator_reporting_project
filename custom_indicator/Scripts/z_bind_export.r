@@ -3,7 +3,7 @@ col_order <- c("reportingperiod", "orgunit", "orgunituid",
                "mech_code", "partner", "ou", "orgunit_parent", "indicator",
                "sex", "age", "otherdisaggregate", "population","numdenom", "value")
 
-ci_fhi <- bind_rows(idn, kaz, kgz, tjk, npl, mmr,  phl, bwa, swz, tnz, zaf, bfa, gha, lbr, mli, sen, tgo) %>%
+ci_fhi <- bind_rows(bdi, civ, cod, lso, mwi, idn, kaz, kgz, tjk, npl, mmr,  phl, bwa, swz, tnz, zaf, bfa, gha, lbr, mli, sen, tgo, mwi) %>%
   select(reportingperiod, orgunit, orgunituid,
          mech_code, partner, ou, orgunit_parent, indicator,
          sex, age, otherdisaggregate, population,numdenom, value) %>%
