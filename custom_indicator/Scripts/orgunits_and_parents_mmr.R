@@ -34,8 +34,8 @@ df_orgs <- tibble::as_tibble(list_orgs$listGrid$rows, .name_repair = "unique") %
   rename_with(.cols = contains("internal_id"),
               .fn = ~str_replace(., "internal_id", "uid")) 
 
-df_orgs
-mmr_6_7 <- df_orgs %>% filter(orgunit_level %in% c(6, 7)) %>% print()
+max(df_orgs$orgunit_level)
+mmr_7_8 <- df_orgs %>% filter(orgunit_level %in% c(7, 8)) %>% print()
 
 # ultimately bind rows so that we can merge by country, orgunit_pa --------
 

@@ -75,7 +75,7 @@ tnz6 <- tnz_info %>% filter(snu_3 == "", snu_4 == "") %>% print()
 # at snu_level_match to metadata level, tz 6 ------------------------------
 tnz6<- tnz_info %>% filter(snu_3_id %in% tnz6uid, snu_4 == "") %>% 
   rename(orgunit_uid = snu_3_id) %>% inner_join(tnz6op) %>%  
-  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%  glimpse()
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
   select(-snu_1_id:-snu_2_id, -snu_4, -snu_4_id)
 nrow(tnz6)
 
@@ -115,7 +115,6 @@ test <- tnz6m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom
   filter(n()>1)
 test
 
-#issue here is that orgunits in data file have been renamed unnecessarily. Only need to do that step for RSA and select areas. Otherwise should convert to LC.
 
 
 tnz <- bind_rows(tnz7, tnz7m, tnz6, tnz6m) %>% 
