@@ -36,8 +36,8 @@ unique(mmr_7_8$orgunit_name)
 
 # for most level 4 that match_level 7, use snu_4 id-----------------------
 mmr8 <- mmr_info %>% filter(snu_4_id %in% mmr8uid, snu_4!="") %>% select(-snu_1_id:-snu_3_id) %>% 
-  rename(orgunit_uid = snu_4_id)  %>% inner_join(mmr8op) %>%  glimpse()
-  rename(orgunituid = orgunit_uid, orgunit = snu_4) 
+  rename(orgunit_uid = snu_4_id)  %>% inner_join(mmr8op) %>%  
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) 
 scales::percent(nrow(mmr8)/nrow(mmr_info))
 
 # for level 4 that doesn't match level 8, match by snu_4 id --------
@@ -86,7 +86,7 @@ mmr7 <- mmr_info %>% filter(snu_3 == "", snu_4 == "") %>% print()
 mmr7<- mmr_info %>% filter(snu_3_id %in% mmr7uid, snu_4 == "") %>% 
   rename(orgunit_uid = snu_3_id) %>% inner_join(mmr7op) %>%  
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%  
-select(-snu_1_id:-snu_2_id, -snu_4)
+select(-snu_1_id:-snu_2_id, -snu_4) %>% glimpse()
 nrow(mmr7)
 scales::percent(nrow(mmr7)/nrow(mmr_info))
 
