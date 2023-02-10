@@ -3,7 +3,6 @@ new repo branch to code orgunits for more countries
 Remaining:
 Botswana
 Burkina Faso
-Eswatini
 Ghana
 Liberia
 Mali 
@@ -11,17 +10,13 @@ Senegal
 Togo
 
 In Progress (B):
-Burma
-Indonesia
-Philippines
+
 
 Completed:
+Asia Region (Kazakhstan Kyrgyzstan Tajikistan Nepal Burma Indonesia Philippines)
 Eswatini
-Kazakhstan
-Kyrgyzstan
-Nepal 
 South Africa
-Tajikistan
+
 Tanzania
 
 Low priority
