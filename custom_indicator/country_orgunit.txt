@@ -1,21 +1,15 @@
 new repo branch to code orgunits for more countries
 
 Remaining:
-West Africa(Burkina Faso, Ghana, Liberia, Mali, Senegal, Togo)
-
-
-In Progress (B):
-Botswana
+West Africa (Burkina Faso, Ghana, Liberia, Mali, Senegal, Togo)
 
 
 Completed:
 Asia Region (Kazakhstan Kyrgyzstan Tajikistan Nepal Burma Indonesia Philippines)
-Eswatini
-South Africa
-Tanzania
+Southern Africa (Botswana, Eswatini, South Africa, Tanzania)
 
 
-Low priority
+Low priority:
 Burundi
 Cote d'Ivoire
 DRC
