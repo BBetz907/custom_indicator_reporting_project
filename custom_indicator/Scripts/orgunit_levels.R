@@ -6,7 +6,7 @@ orgunit_levels <- grabr::get_levels(
   password = datim_pwd(),
   baseurl = "https://final.datim.org/") %>% 
   filter(countryname %in% countries) %>% 
-  arrange(countryname) %>% print(n=22)
+  arrange(operatingunit, countryname) %>% print(n=22)
 
 
 

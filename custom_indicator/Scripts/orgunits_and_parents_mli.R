@@ -1,8 +1,4 @@
 
-# obtain list of countries from cleaned infolink data ---------------------
-countries <- complete_clean_data %>% group_by(country) %>% summarise(.groups = "drop")
-countries <- c(countries$country)
-
 
 # get ou tableD from DATIM -------------------------------------------------
 
@@ -20,7 +16,7 @@ df_ous
 #USE PURR TO ITERATE AND PULL LIST FOR ALL COUNTRIES
 
 list_orgs <- df_ous %>% 
-  filter(country %in% c("Burma")) %>% 
+  filter(country %in% c("Mali")) %>% 
   pull(country_iso) %>% 
   paste0(org_url, "&var=OU:", ., "&paging=false") %>% 
   httr::GET(httr::authenticate(user = glamr::datim_user(), 
@@ -36,7 +32,10 @@ df_orgs <- tibble::as_tibble(list_orgs$listGrid$rows, .name_repair = "unique") %
 
 max(df_orgs$orgunit_level)
 unique(df_orgs$regionorcountry_code)
-mmr_7_8 <- df_orgs %>% filter(orgunit_level %in% c(7, 8)) %>% print()
+mli_6_7 <- 
+  df_orgs %>% 
+  filter(orgunit_level %in% c(6, 7)) %>% 
+  print()
 
 # ultimately bind rows so that we can merge by country, orgunit_pa --------
 
