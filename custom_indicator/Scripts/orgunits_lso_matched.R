@@ -16,7 +16,7 @@ snu2 <- c(unique(lso_info$snu_2)) %>% print()
 snu1 <- c(unique(lso_info$snu_1)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-lso5op <- lso_5_5 %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+lso5op <- lso_5_6 %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 lso5uid <- c(lso5op$orgunit_uid)
 unique(lso5op$orgunit_name)
 

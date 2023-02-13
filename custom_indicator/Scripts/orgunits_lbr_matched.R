@@ -83,7 +83,7 @@ lbr_info %>% filter(snu_3 == "", snu_2 == "") %>% print()
 # for snu3 3 that do not match_level 7, use snu_2 id-----------------------
 lbr6 <- lbr_info %>% filter(snu_2_id %in% lbr6uid, snu_3 %in% non_matched_snu_3_name) %>% select(-snu_1_id) %>% 
   rename(orgunit_uid = snu_3_id)  %>% inner_join(lbr7op) %>%  
-  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>% 
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) 
 scales::percent(nrow(lbr6)/nrow(lbr_info))
 
 # for snu3 that doesn't match level 7, match by snu_2 name --------

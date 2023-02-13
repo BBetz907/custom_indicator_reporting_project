@@ -49,9 +49,7 @@ grabr::pano_download(item_url = url_ou_im, session = sess)
 
 # read OUxIM MSD, filter and condense---------------------------------------------
 file <- glamr::return_latest("Data/", "OU_IM_FY20") %>% print()
-mer_df <- read_msd(file, save_rds = TRUE, remove_txt = FALSE)
-
-msd <- mer_df %>%  filter(
+msd <- read_msd(file, save_rds = TRUE, remove_txt = FALSE) %>%  filter(
   str_detect(standardizeddisaggregate, "KeyPop|Total") == TRUE,
   funding_agency == "USAID") %>% 
   mutate(fy = fiscal_year,
