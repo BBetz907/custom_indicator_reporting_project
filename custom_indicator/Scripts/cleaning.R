@@ -7,14 +7,13 @@ keypop <- c("FSW","MSM","PWID","TG","Prison")
 
 
 # Select Current Quarter --------------------------------------------------
-current_q <- "fy23_q2"
+current_q <- "fy23_q3"
 
 # identify files ----------------------------------------------------------
 files <- list.files(path="data",pattern = current_q) %>% paste("data/",.) %>% str_replace(" ", "") 
 kp_disaggs_counts <- files %>% keep(grepl("kp_disaggs_counts", files))
 age_sex_counts <- files %>% keep(grepl("age_sex_counts", files))
 age_sex_snapshots <- files %>% keep(grepl("snapshot", files))
-
 
 #KP disaggs cleaning
 kp_disaggs_counts <- read.csv(kp_disaggs_counts)
@@ -90,6 +89,6 @@ age_sex_snapshot_clean <- age_sex_snapshot %>% clean_names() %>%
 
 #merge all three files
 complete_clean_data_pre_mech <- bind_rows(age_sex_counts_clean, age_sex_snapshot_clean, kp_disaggs_counts_clean) %>% 
-  mutate(country = recode(country, "Cote dIvoire" = "Cote d'Ivoire")) %>%
+  mutate(country = recode(country, "Cote dIvoire" = "Cote d'Ivoire"),
+         indicator = recode(indicator, "TX_PVLS_ELIGIBLE_VERIFY" = "TX_PVLS_ELIGIBLE")) %>%
   relocate(population, .after = "otherdisaggregate")
-

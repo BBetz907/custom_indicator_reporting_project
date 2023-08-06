@@ -4,10 +4,7 @@ col_order <- c("reportingperiod", "orgunit", "orgunituid",
                "sex", "age", "otherdisaggregate", "population","numdenom", "value")
 mission2report <- c("Eswatini", "Cote d'Ivoire")
 
-ci_fhi <- bind_rows(bdi_merge_psnu, bwa_merge_psnu, civ_merge_psnu, cod_merge_psnu, lso_merge_psnu, mwi_merge_psnu, swz_merge_psnu,
-                    zaf_merge_psnu, idn_merge_psnu, kaz_merge_psnu, kgz_merge_psnu, tjk_merge_psnu, tza_merge_psnu, lao_merge_psnu, 
-                    npl_merge_psnu, mmr_merge_psnu, bfa_merge_psnu, gha_merge_psnu, lbr_merge_psnu, mli_merge_psnu, sen_merge_psnu,
-                    tgo_merge_psnu, tha_merge_psnu, vnm_merge_psnu) %>%
+ci_fhi <- do.call(bind_rows, lapply(ls(pattern = "_merge_psnu"), get)) %>%
   #exclude what country teams report
   filter(!(str_detect(tolower(indicator), "prep") & country == "Botswana"),
          !country %in% mission2report)
@@ -16,10 +13,11 @@ ci_fhi <- bind_rows(bdi_merge_psnu, bwa_merge_psnu, civ_merge_psnu, cod_merge_ps
 ci_fhi360 <-  ci_fhi %>%    select(reportingperiod, orgunit, orgunituid,
          mech_code, partner, ou, psnu, indicator,
          sex, age, otherdisaggregate, population,numdenom, value) %>%
-    group_by(across(-c(value))) %>% summarise(value = sum(value), .groups ="drop") %>%
+    group_by(across(-c(value))) %>% summarise(value = sum(value), .groups ="drop") %>% 
+  mutate(indicator = recode(indicator, "TX_PVLS_ELIGIBLE_VERIFY" = "TX_PVLS_ELIGIBLE")) %>%
   glimpse()
 
-ci <- ci_fhi360[,col_order]
+ci <- ci_fhi360[,col_order] 
 
 ous <- c(unique(ci$ou))
 reportingperiod <- unique(c(ci$reportingperiod))
@@ -30,10 +28,8 @@ for (i in ous){
 }
 
 
-# test <- bind_rows(idn, kaz, kgz, tjk, npl, mmr,  phl, bwa, swz, tnz, zaf, bfa, gha, lbr, mli, sen, tgo) %>% 
-  # filter(is.na(orgunit_level)) %>% 
-  # glimpse()
-table(ci$ou, ci$indicator)
+ci |> count(ou, indicator) |> pivot_wider(names_from = indicator, values_from = n) |> relocate(TX_PVLS_ELIGIBLE, .before = PrEP_CT_VERIFY) |> 
+  mutate_at(c(2:9), ~replace_na(.,0))
 
 # rm(list = ls()[grepl("bwa", ls())])
 

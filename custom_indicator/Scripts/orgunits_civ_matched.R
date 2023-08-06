@@ -123,5 +123,4 @@ civ <- bind_rows(civ7, civ7m, civ6, civ6m) %>% select(-contains("snu")) %>%
 #check to see if number of rows matches source
 nrow(civ) - nrow(civ_info)
 
-
 #later bind country dfs together

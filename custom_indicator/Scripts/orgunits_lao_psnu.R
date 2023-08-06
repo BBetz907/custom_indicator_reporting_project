@@ -15,3 +15,5 @@ lao_data_check <- lao_merge_psnu %>% group_by(psnu, psnu_uid, indicator, age, se
 
 # read_csv("https://www.datim.org/api/sqlViews/W5RIpSXU1DP/data.csv")
 # check psnu ref tables, sometimes wrong?
+
+nrow(lao) - nrow(lao_merge_psnu)

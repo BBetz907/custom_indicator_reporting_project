@@ -13,11 +13,13 @@ mmr_orgunit_table <- reduce(mmr_org_levels, full_join)
 mmr_8_clean <- mmr %>% filter(orgunit_level == 8) %>% rename(orgunit_7 = orgunit_parent, orgunit_7_uid = orgunit_parent_uid)
 mmr_7_clean <- mmr %>% filter(orgunit_level == 7) %>% rename(orgunit_6 = orgunit_parent, orgunit_6_uid = orgunit_parent_uid)
 
-mmr_8_merge <- left_join(mmr_8_clean, mmr_orgunit_table, by = join_by(orgunit_7_uid, orgunit_7), multiple = "all") %>% 
+mmr_8_merge <- left_join(mmr_8_clean, mmr_orgunit_table, by = join_by(orgunituid == orgunit_8_uid, orgunit == orgunit_8), multiple = "all", relationship = "many-to-one") %>% 
   select(-c(contains("orgunit_8"), contains("orgunit_7"), contains("orgunit_6"), contains("orgunit_4"))) %>% distinct() %>%
   rename(psnu = orgunit_5, psnu_uid = orgunit_5_uid)
-mmr_7_merge <- left_join(mmr_7_clean, mmr_orgunit_table, by = join_by(orgunit_6_uid, orgunit_6), multiple = "all", relationship = "many-to-many") %>% 
+mmr_7_merge <- left_join(mmr_7_clean, mmr_orgunit_table, by = join_by(orgunituid == orgunit_7_uid, orgunit == orgunit_7), multiple = "all", relationship = "many-to-many") %>% 
   select(-c(contains("orgunit_8"), contains("orgunit_7"), contains("orgunit_6"), contains("orgunit_4"))) %>% distinct() %>%
   rename(psnu = orgunit_5, psnu_uid = orgunit_5_uid)
 
 mmr_merge_psnu <- bind_rows(mmr_8_merge, mmr_7_merge)
+
+nrow(mmr) - nrow(mmr_merge_psnu)

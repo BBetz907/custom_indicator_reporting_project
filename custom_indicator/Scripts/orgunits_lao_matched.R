@@ -40,7 +40,7 @@ lao7m_dup <- lao7 %>% select(value, indicator, age, sex, otherdisaggregate, numd
 
   
 # for snu 3 that doesn't match level 7, match by snu_1/id to level 6 since the other levels are missing --------
-lao5 <- lao_info %>% filter(snu_3=="", snu_1 %in% lao5name) %>%  
+lao5 <- lao_info %>% filter(!(snu_3 %in% lao7name & snu_3!=""), snu_1 %in% lao5name) %>%  
   inner_join(lao5op, by = c("snu_1" = "orgunit_name")) %>% 
   rename(orgunituid = orgunit_uid, orgunit = snu_1) %>%
   select(-contains("snu")) %>% glimpse()
@@ -58,3 +58,4 @@ lao <- bind_rows(lao7, lao5) %>% select(-contains("snu")) %>% glimpse()
 nrow(lao) - nrow(lao_info) 
 #number of rows
 
+lao_info |> print(n=130)

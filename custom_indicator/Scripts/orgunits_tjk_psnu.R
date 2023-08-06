@@ -14,6 +14,8 @@ tjk_orgunit_table <- reduce(tjk_org_levels, full_join)
 #merge with data
 tjk_clean <- tjk %>% rename(orgunit_6 = orgunit_parent, orgunit_6_uid = orgunit_parent_uid)
 
-tjk_merge_psnu <- left_join(tjk_clean, tjk_orgunit_table, by = join_by(orgunit_6_uid, orgunit_6), multiple = "all") %>% 
+tjk_merge_psnu <- left_join(tjk_clean, tjk_orgunit_table, by = join_by(orgunituid == orgunit_7_uid, orgunit == orgunit_7), multiple = "all", relationship = "many-to-one") %>% 
   select(-c(contains("orgunit_7"), contains("orgunit_6"), contains("orgunit_4"))) %>% distinct() %>%
   rename(psnu = orgunit_5, psnu_uid = orgunit_5_uid)
+
+nrow(tjk_clean) - nrow(tjk_merge_psnu)
