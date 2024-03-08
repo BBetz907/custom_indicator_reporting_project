@@ -15,17 +15,18 @@ snu1 <- unique(bfa_info$snu_1) %>% print()
 snu2 <- c(unique(bfa_info$snu_2)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-bfa6op <- bfa_5_6 %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
+bfa6op <- df_orgs$bfa_orgs %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
 bfa6uid <- c(bfa6op$orgunit_uid)
 unique(bfa6op$orgunit_name)
 
-bfa5op <- bfa_5_6 %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+bfa5op <- df_orgs$bfa_orgs %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 bfa5uid <- c(bfa5op$orgunit_uid)
 unique(bfa5op$orgunit_name)
 
 
-bfa_5_6 %>% filter(orgunit_name %in% snu2) #snu2 should match datim level 6
-bfa_5_6 %>% filter(orgunit_name %in% snu1) #snu2 should match datim level 5
+
+df_orgs$bfa_orgs %>% filter(orgunit_name %in% snu2) #snu2 should match datim level 6
+df_orgs$bfa_orgs %>% filter(orgunit_name %in% snu1) #snu2 should match datim level 5
 
 
 ################################################################################
@@ -74,16 +75,22 @@ bfa6m %>% filter(is.na(orgunituid))
 
 # check for missing data at snu_level_3
 bfa5 <- bfa_info %>% filter(snu_2 == "", snu_2 == "") %>% print()
-
+bfa5m <- bfa5 %>% rename(orgunit_uid = snu_1_id,
+                         orgunit_name = snu_1)  %>% 
+  inner_join(bfa5op) %>% # or inner if there are non-matches 
+  select(-contains("snu")) %>%
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
+  glimpse() #check if the tibble nrow matches the previous count. if it exceeds there is some double matching
+nrow(bfa5m)
+scales::percent(nrow(bfa5m)/nrow(bfa_info))
 ##############################################################################
-
 
 
 
 ###############################################################################
 
 
-bfa <- bind_rows(bfa6, bfa6m) %>% select(-contains("snu")) %>% 
+bfa <- bind_rows(bfa6, bfa6m, bfa5m) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(bfa) - nrow(bfa_info)

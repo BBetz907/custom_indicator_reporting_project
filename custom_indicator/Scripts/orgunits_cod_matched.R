@@ -17,11 +17,11 @@ snu2 <- c(unique(cod_info$snu_2)) %>% print()
 snu1 <- c(unique(cod_info$snu_1)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-cod5op <- cod_4_5 %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+cod5op <- df_orgs$cod_orgs %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 cod5uid <- c(cod5op$orgunit_uid)
 unique(cod5op$orgunit_name)
 
-cod4op <- cod_4_5 %>% filter(orgunit_level  == "4") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+cod4op <- df_orgs$cod_orgs %>% filter(orgunit_level  == "4") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 cod4uid <- c(cod4op$orgunit_uid)
 unique(cod4op$orgunit_name)
 

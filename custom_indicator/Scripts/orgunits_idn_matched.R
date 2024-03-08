@@ -12,7 +12,7 @@
 # user purr to create DF for each country, named after each count --------
 
 # get orgunit levels to match and join ------------------------------------
-idn7op <- idn_7 %>% select(orgunit_level:orgunit_name)
+idn7op <- df_orgs$idn_orgs %>% select(orgunit_level:orgunit_name)
 idn7uid <- c(idn7op$orgunit_uid)
 idn7name <- unique(c(idn7op$orgunit_name))
 
@@ -37,7 +37,7 @@ idn_info <- complete_clean_data %>% filter(country=="Indonesia") %>%
 
 
 unique(idn_info$snu_3)
-unique(idn_6_7$orgunit_name)
+#unique(idn_6_7$orgunit_name)
 
 #snu3 should match level 7, usually
 
@@ -62,9 +62,9 @@ test <- idn7m1 %>%
   anti_join(idn7op) %>% arrange(orgunit_name) %>% glimpse()
 #resolve discrepancies
 unique(test$orgunit_name)
-test2 <- idn_7 %>% select(orgunit_name) %>%
-  filter(str_detect(orgunit_name, "Subroto")) %>% arrange((orgunit_name))
-unique(test2$orgunit_name)
+# test2 <- idn_7 %>% select(orgunit_name) %>%
+#   filter(str_detect(orgunit_name, "Subroto")) %>% arrange((orgunit_name))
+# unique(test2$orgunit_name)
 
 
 #now match

@@ -15,10 +15,10 @@ is.na(bwa_info$snu_3)  #snu3 level should match to level 6 in datim
 unique(bwa_info$snu_3)
 
 # get orgunit levels to match and join ------------------------------------
-bwa5op <- bwa_5_6 %>% filter(orgunit_level  == "5") %>% select(orgunit_level:orgunit_name) 
+bwa5op <- df_orgs$bwa_orgs %>% filter(orgunit_level  == "5") %>% select(orgunit_level:orgunit_name) 
 bwa5uid <- c(bwa5op$orgunit_uid)
 
-bwa6op <- bwa_5_6 %>% filter(orgunit_level  == "6") %>% select(orgunit_level:orgunit_name)
+bwa6op <- df_orgs$bwa_orgs %>% filter(orgunit_level  == "6") %>% select(orgunit_level:orgunit_name)
 bwa6uid <- c(bwa6op$orgunit_uid)
 unique(bwa6op$orgunit_name)
 

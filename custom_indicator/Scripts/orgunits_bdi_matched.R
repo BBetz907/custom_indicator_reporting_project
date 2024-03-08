@@ -29,15 +29,15 @@ snu3 <- c(unique(bdi_info$snu_3)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
 
-bdi7op <- bdi_5_7 %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+bdi7op <- df_orgs$bdi_orgs %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 bdi7uid <- c(bdi7op$orgunit_uid)
 bdi7name <- unique(c(bdi7op$orgunit_name))
 
-bdi6op <- bdi_5_7 %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+bdi6op <- df_orgs$bdi_orgs %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 bdi6uid <- c(bdi6op$orgunit_uid)
 bdi6name <- unique(c(bdi6op$orgunit_name))
 
-bdi5op <- bdi_5_7 %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+bdi5op <- df_orgs$bdi_orgs %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 bdi5uid <- c(bdi5op$orgunit_uid)
 bdi5name <- unique(c(bdi5op$orgunit_name))
 

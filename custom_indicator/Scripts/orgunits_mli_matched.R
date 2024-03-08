@@ -17,17 +17,17 @@ snu2 <- c(unique(mli_info$snu_2)) %>% print()
 snu1 <- c(unique(mli_info$snu_1)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-mli7op <- mli_6_7 %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
+mli7op <- df_orgs$mli_orgs %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
 mli7uid <- c(mli7op$orgunit_uid)
 unique(mli7op$orgunit_name)
 
-mli6op <- mli_6_7 %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+mli6op <- df_orgs$mli_orgs%>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 mli6uid <- c(mli6op$orgunit_uid)
 unique(mli6op$orgunit_name)
 
 
-mli_6_7 %>% filter(orgunit_name %in% snu2) #snu1 should match datim level 7
-mli_6_7 %>% filter(orgunit_name %in% snu1) #snu1 should match datim level 6
+df_orgs$mli_orgs %>% filter(orgunit_name %in% snu2) #snu1 should match datim level 7
+df_orgs$mli_orgs %>% filter(orgunit_name %in% snu1) #snu1 should match datim level 6
 #test the other way in the future
 
 ################################################################################
