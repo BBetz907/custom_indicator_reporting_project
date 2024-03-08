@@ -5,12 +5,12 @@
 rp <- c("West Africa Region", "Asia Region", "Western Hemisphere Region")
 
 
-# generate list of FHI mechanisms for FY23, by country --------------------------------
+# generate list of FHI mechanisms for FY24, by country --------------------------------
 mech_id_ref_datim_fy23 <- read_csv("https://www.datim.org/api/sqlViews/fgUtV6e9YIX/data.csv") %>% 
   filter(str_detect(partner, "^FHI|^Family\\sHealth\\sInt"),
          agency == "USAID",
-         startdate < "2023-10-01",
-         enddate >= "2022-10-01",
+         startdate < "2024-10-01",
+         enddate >= "2023-10-01",
          # !str_detect(mechanism, "(?<=\\s\\-\\s)GHSC-QA|(?<=\\s\\-\\s)Quality\\sAssurance|"),
          str_detect(mechanism, "EpiC|Epic|EAWA")) %>% 
   mutate(country = if_else(ou %in% rp, str_extract(mechanism, "(?<=\\)\\s\\-\\s).+$"), ou),

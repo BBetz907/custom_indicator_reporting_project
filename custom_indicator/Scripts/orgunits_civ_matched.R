@@ -30,7 +30,9 @@ civ6uid <- c(civ6op$orgunit_uid)
 unique(civ6op$orgunit_name)
 
 civ7op %>% filter(orgunit_name %in% snu4) #snu4 should match datim level 7
-civ6op %>% filter(orgunit_name %in% snu3) #snu3 should match datim level 6
+civ6op %>% filter(orgunit_name %in% snu3) |> print(n=29
+                                                   
+                                                   )#snu3 should match datim level 6
 
 
 ################################################################################
@@ -58,7 +60,6 @@ test2 <- civ7op %>% select(orgunit_name) %>%
 unique(test2$orgunit_name)
 #unable to find one facility (match level 2)
 
-
 #now match
 civ7m <- civ7m1 %>% inner_join(civ7op) %>% # or inner if there are non-matches 
   select(-snu_1_id:-snu_4_id) %>%
@@ -82,43 +83,46 @@ civ7m %>% filter(is.na(orgunituid))
 civ_info %>% filter(snu_3 == "", snu_4 == "") %>% print()
 # 
 # ##############################################################################
-# 
-# for snu3 3 that do not match_level 6, use snu_2 id-----------------------
-civ6 <- civ_info %>% filter(snu_3_id %in% civ6uid, snu_4 == "") %>% select(-snu_1_id:-snu_2_id ) %>% 
-  rename(orgunit_uid = snu_3_id)  %>% inner_join(civ6op) %>%
-  rename(orgunituid = orgunit_uid, orgunit = orgunit_name)
+
+
+civ6 <- civ_info %>% anti_join(civ7m, by = c("snu_4" = "orgunit")) |> inner_join(civ6op, by = c("snu_3" = "orgunit_name")) |> 
+  rename(orgunituid = orgunit_uid, orgunit = snu_3) |>   select(-ends_with("_id"), -starts_with("snu")) %>% glimpse()
+
 scales::percent(nrow(civ6)/nrow(civ_info))
-
-# for snu3 that doesn't match level 6, match by snu_2 name --------
-civ6m1 <- civ_info %>% filter(!snu_3_id %in% civ6uid, snu_4 == "") %>% rename(orgunit_name = snu_3) %>% glimpse()
-scales::percent(nrow(civ6m1)/nrow(civ_info))
-nrow(civ6m1)
-
-#identify and resolve any failed matches
-non_matched_snu_3 <- civ6m1 %>%
-  anti_join(civ6op) %>% glimpse()
-
-
-#now match
-civ6m <- civ6m1 %>% inner_join(civ6op) %>% # or inner if there are non-matches
-  select(-snu_1_id:-snu_2_id) %>%
-  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
-  glimpse() #check if the tibble nrow matches the previous count. if it exceeds there is some double matching
-nrow(civ6m)
-scales::percent(nrow(civ6m)/nrow(civ_info))
-
-#check for 1:many matches
-civ6m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, population, orgunit) %>% group_by_all() %>%
-  filter(n()>1)
-
-
-#check for unmatched
-civ6m %>% filter(is.na(orgunituid))
+nrow(civ6)
+# 
+# # for snu3 that doesn't match level 6, match by snu_2 name --------
+# civ6m1 <- civ_info %>% filter(!snu_3_id %in% civ6uid, snu_4 == "") %>% rename(orgunit_name = snu_3) %>% glimpse()
+# scales::percent(nrow(civ6m1)/nrow(civ_info))
+# nrow(civ6m1)
+# 
+# #identify and resolve any failed matches
+# non_matched_snu_3 <- civ6m1 %>%
+#   anti_join(civ6op) %>% glimpse()
+# 
+# 
+# #now match
+# civ6m <- civ6m1 %>% inner_join(civ6op) %>% # or inner if there are non-matches
+#   select(-snu_1_id:-snu_2_id) %>%
+#   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
+#   glimpse() #check if the tibble nrow matches the previous count. if it exceeds there is some double matching
+# nrow(civ6m)
+# scales::percent(nrow(civ6m)/nrow(civ_info))
+# 
+# #check for 1:many matches
+# civ6m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, population, orgunit) %>% group_by_all() %>%
+#   filter(n()>1)
+# 
+# 
+# 
+# 
+# #check for unmatched
+# civ6m %>% filter(is.na(orgunituid))
 
 ###############################################################################
 
 
-civ <- bind_rows(civ7, civ7m, civ6, civ6m) %>% select(-contains("snu")) %>% 
+civ <- bind_rows(civ7, civ7m, civ6) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(civ) - nrow(civ_info)

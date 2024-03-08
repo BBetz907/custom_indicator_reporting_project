@@ -132,7 +132,7 @@ mwi %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, populati
 # mwi <- bind_rows(mwi6m) %>% select(-contains("snu")) %>%
 #   glimpse()
 # #check to see if number of rows matches source
-# nrow(mwi) - nrow(mwi_info)
+nrow(mwi) - nrow(mwi_info)
 
 
 #later bind country dfs together

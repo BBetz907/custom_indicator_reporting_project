@@ -13,7 +13,9 @@
 phl_info <- complete_clean_data %>% filter(country=="Philippines") %>%
   mutate(snu_4 = recode(snu_4, 
          "Usbong ng Bulakenyo Inc." = "Usbong ng Bulakenyo",
-         "Gen. Trias SHC" = "General Trias SHC" 
+         "Gen. Trias SHC" = "General Trias SHC",
+         "Las Pinas SHC" = "Las Piñas SHC",
+         "HASH-SHIP Clinic - CAMANAVA" = "HASH-SHIP CAMANAVA",
          )) %>%
   clean_names() %>% print()
 
@@ -24,7 +26,7 @@ unique(phl_info$snu_4) #snu4 level should match to level 8 in datim
 phl8op <- df_orgs$phl_orgs %>% filter(orgunit_level == 8) %>% select(orgunit_level:orgunit_name) %>% print()
 phl8uid <- c(phl8op$orgunit_uid)
 
-
+phl8op |> filter(str_detect(str_to_lower(orgunit_name), "Piñas"))
 
 ################################################################################
 
@@ -43,10 +45,10 @@ nrow(phl8m1)
 
 #identify and resolve any failed matches
 phl8m1 %>%
-  anti_join(phl8op) %>% select(orgunit_name) 
+  anti_join(phl8op) %>% count(orgunit_name) 
 #resolve discrepancies
 
-
+phl8op |> filter(str_detect(str_to_lower(orgunit_name), "camanava"))
 
 #now match
 phl8m <- phl8m1 %>% inner_join(phl8op) %>% # or inner if there are non-matches 

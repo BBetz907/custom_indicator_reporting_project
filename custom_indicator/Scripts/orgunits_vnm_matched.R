@@ -37,9 +37,18 @@ vnm5 <- vnm6m1 %>% filter(snu_2_id %in% vnm5uid, snu_2!="") %>% select(-c(snu_1_
   rename(orgunit_uid = snu_2_id)  %>% inner_join(vnm5op) %>%  
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) 
 scales::percent(nrow(vnm5)/nrow(vnm_info))
+nrow(vnm5)
 
+#non-matching
+vnm5m1 <- vnm6m1 %>% filter(!snu_2_id %in% vnm5uid, snu_2!="") %>% select(-c(snu_1_id)) %>% 
+  rename(orgunit_uid = snu_2_id)  %>% anti_join(vnm5op) %>%  
+  rename(snu_2_id = orgunit_uid) |> glimpse()
 
-vnm <- bind_rows(vnm5, vnm6) %>% select(-contains("snu")) %>% 
+vnm51 <- vnm5m1 |> rename(orgunit_name = snu_2, orgunit_parent = snu_1) |>  inner_join(vnm5op) |> 
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) |> 
+glimpse()
+
+vnm <- bind_rows(vnm5, vnm6, vnm51) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(vnm) - nrow(vnm_info)

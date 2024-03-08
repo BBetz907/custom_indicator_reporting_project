@@ -29,14 +29,16 @@ mmr8 <- mmr_info %>% filter(snu_4_id %in% mmr8uid, snu_4!="") %>% select(-snu_1_
   rename(orgunit_uid = snu_4_id)  %>% inner_join(mmr8op) %>%  
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) 
 scales::percent(nrow(mmr8)/nrow(mmr_info))
+nrow(mmr8)
 
-# for non-missing level 4 that doesn't match level 8, match by snu_4 name --------
+
+# for non-missing level 4 that doesn't match level 8 by id, match by snu_4 name --------
 mmr8m1 <- mmr_info %>% filter(!snu_4_id %in% mmr8uid, snu_4 != "") %>% rename(orgunit_name = snu_4)
 scales::percent(nrow(mmr8m1)/nrow(mmr_info))
 nrow(mmr8m1)
 
 
-#now match
+#now match level 4 to level 8 by ID
 mmr8m <- mmr8m1 %>%   inner_join(mmr8op) %>% # or inner if there are non-matches 
   select(-snu_1_id:-snu_4_id) %>%
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
@@ -49,8 +51,6 @@ mmr8m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, popula
   filter(n()>1)
 
 
-#check for unmatched
-mmr8m %>% filter(is.na(orgunituid)) 
 
 
 ##############################################################################
@@ -59,20 +59,26 @@ mmr8m %>% filter(is.na(orgunituid))
 mmr_info %>% filter(snu_3 == "", snu_4 == "") %>% print()
 
 ##############################################################################
+mmr_info |> rename(orgunit_name = snu_4) |> count(orgunit_name) |> 
+  inner_join(mmr8op)
 
-
-#excluding the above
+#excluding the above that match at level 8
 
 # at snu_level_match to metadata level, mmr 7 using uid------------------------------
-mmr7<- mmr_info %>% filter(snu_3_id %in% mmr7uid, snu_4 == "") %>% 
+mmr7<- mmr_info %>% 
+  rename(orgunit_name = snu_4) |> anti_join(mmr8op) |> select(-orgunit_name) |> #excluding those that matched by snu4 name to level 8 name
+  filter(snu_3_id %in% mmr7uid) %>% #302 appear to match by snu_3_id to level 7 id
   rename(orgunit_uid = snu_3_id) %>% inner_join(mmr7op) %>%  
-  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%  
-select(-snu_1_id:-snu_2_id, -snu_4) %>% glimpse()
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>% glimpse()
 nrow(mmr7)
 scales::percent(nrow(mmr7)/nrow(mmr_info))
 
-# for level 3 that doesn't match level 7 id, match by snu_3 name from metadata ----------
-mmr7m1 <- mmr_info %>% filter(!snu_3_id %in% mmr7uid, snu_4 == "") %>% rename(orgunit_name = snu_3) %>% glimpse()
+
+# for level 3 that doesn't match level 7 id, try to match by snu_3 name from metadata ----------
+mmr7m1 <-mmr_info %>% 
+  rename(orgunit_name = snu_4) |> anti_join(mmr8op) |> select(-orgunit_name) |> #excluding those that matched by snu4 name to level 8 name
+  filter(!snu_3_id %in% mmr7uid) |> 
+  rename(orgunit_name = snu_3) %>% glimpse()
 nrow(mmr7m1) 
 
 mmr7m <- mmr7m1 %>%  inner_join(mmr7op) %>% # or inner if there are non-matches 
@@ -97,11 +103,11 @@ mmr7m %>% filter(is.na(orgunituid))
 mmr_info %>% filter(snu_3 == "", snu_4 == "") %>% print()
 
 ##############################################################################
-
+mmr6<- mmr_info %>% filter(!snu_4 %in% mmr8org) |> print()
 ###############################################################################
 
 
-mmr <- bind_rows(mmr8, mmr8m, mmr7, mmr7m) %>% select(-contains("snu")) %>% 
+mmr <- bind_rows(mmr8m, mmr7, mmr7m) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(mmr) - nrow(mmr_info)

@@ -72,15 +72,15 @@ nrow(lbr_info) - nrow(lbr7) - nrow(lbr7m)
 scales::percent((nrow(lbr_info) - nrow(lbr7) - nrow(lbr7m))/nrow(lbr_info))
 
 #check for 1:many matches
-lbr7m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, population, orgunit) %>% group_by_all() %>% 
-  filter(n()>1)
+#lbr7m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, population, orgunit) %>% group_by_all() %>% 
+ # filter(n()>1)
 
 
 #check for unmatched
 lbr7m %>% filter(is.na(orgunit)) 
 
-lbr_info %>% anti_join(lbr7op, by = c("snu_3_id" = "")) %>% anti_join(lbr_info, by = c("" = ))
-##############################################################################
+# lbr_info %>% anti_join(lbr7op, by = c("snu_3_id" = "")) %>% anti_join(lbr_info, by = c("" = ))
+#############################################################################
 
 # check for missing data at snu_level_3
 lbr_no3 <- lbr_info %>% filter(snu_3 == "" ) %>% print()
@@ -93,7 +93,10 @@ lbr6m <- lbr_info %>% filter(!snu_3_id %in% lbr7uid, !snu_3 %in% lbr7org) %>%
   rename(orgunit_name = snu_2)  %>% 
   inner_join(lbr6op) %>%  
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>% glimpse()
-scales::percent(nrow(lbr6)/nrow(lbr_info))
+scales::percent(nrow(lbr6m)/nrow(lbr_info))
+
+
+
 
 lbr <- bind_rows(lbr7, lbr7m, lbr6m) %>% select(-contains("snu")) %>% 
   glimpse() 

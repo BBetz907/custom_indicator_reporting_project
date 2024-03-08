@@ -23,11 +23,19 @@ swz5op <- df_orgs$swz_orgs %>%
   mutate(orgunit_parent  = str_to_title(orgunit_parent),
          orgunit_parent  = str_replace(orgunit_parent, "\\s\\s", "\\s"), 
          orgunit_name  = str_to_title(orgunit_name),
-         orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print() %>%
+         orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print(n=641) %>%
   filter(orgunit_level  == "5") %>% select(orgunit_level:orgunit_name)
 swz5uid <- c(swz5op$orgunit_uid)
 swz5org <- c(swz5op$orgunit_name)
-swz5uid
+
+swz4op <- df_orgs$swz_orgs %>%
+  mutate(orgunit_parent  = str_to_title(orgunit_parent),
+         orgunit_parent  = str_replace(orgunit_parent, "\\s\\s", "\\s"), 
+         orgunit_name  = str_to_title(orgunit_name),
+         orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print(n=641) %>%
+  filter(orgunit_level  == "4") %>% select(orgunit_level:orgunit_name)
+swz4org <- c(swz4op$orgunit_name)
+swz4uid <- c(swz4op$orgunit_uid)
 
 ################################################################################
 nrow(swz_info)
@@ -48,8 +56,10 @@ nrow(swz5m1)
 
 #identify and resolve any failed matches
 swz5m1 %>% 
-  anti_join(swz5op) %>% select(orgunit_name) %>% print()
+  anti_join(swz5op) %>% select(contains("snu"), contains("org"), indicator, value) %>% print()
 #resolve discrepancies
+#Kumethula
+
 
 #now match
 swz5m <- swz5m1 %>% inner_join(swz5op) %>% # or inner if there are non-matches
@@ -78,9 +88,25 @@ swz5m1 %>% filter(orgunit_name %in% swz5m_dups, indicator == "PrEP_OFFER") %>%
 swz5m %>% filter(is.na(orgunituid))
 
 
-swz <- bind_rows(swz5, swz5m) %>% select(-contains("snu"))
+# level 4
+swz4 <- swz5m1 %>% 
+  anti_join(swz5op) %>%  filter(snu_1 %in% swz4org)  |> 
+  select(-snu_4_id, -snu_3_id, -snu_2_id, -orgunit_name, -snu_3, -snu_4, - snu_1_id) %>% 
+  mutate(orgunit_uid = case_when(snu_1 == "Shiselweni" ~ "qRppsyyTP4A")) %>% 
+  rename(orgunit_name = snu_1) |> 
+  inner_join(swz4op) |> 
+  glimpse()
+nrow(swz4)
+  
+
+
+swz5 |> glimpse()
+swz <- bind_rows(swz5, swz5m, swz4) %>% select(-contains("snu"))
 #check to see if number of rows matches source
 nrow(swz) - nrow(swz_info)
 
-
+# swz
+# swz5
+# swz5m
+# swz4
 #later bind country dfs together

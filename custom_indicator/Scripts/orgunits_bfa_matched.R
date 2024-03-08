@@ -75,16 +75,22 @@ bfa6m %>% filter(is.na(orgunituid))
 
 # check for missing data at snu_level_3
 bfa5 <- bfa_info %>% filter(snu_2 == "", snu_2 == "") %>% print()
-
+bfa5m <- bfa5 %>% rename(orgunit_uid = snu_1_id,
+                         orgunit_name = snu_1)  %>% 
+  inner_join(bfa5op) %>% # or inner if there are non-matches 
+  select(-contains("snu")) %>%
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
+  glimpse() #check if the tibble nrow matches the previous count. if it exceeds there is some double matching
+nrow(bfa5m)
+scales::percent(nrow(bfa5m)/nrow(bfa_info))
 ##############################################################################
-
 
 
 
 ###############################################################################
 
 
-bfa <- bind_rows(bfa6, bfa6m) %>% select(-contains("snu")) %>% 
+bfa <- bind_rows(bfa6, bfa6m, bfa5m) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(bfa) - nrow(bfa_info)

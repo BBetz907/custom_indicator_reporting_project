@@ -1,2 +1,0 @@
-The purpose of this branch is to transform the Laos data to input PSNU in the orgunit parent placeholder column. This branch is necessary
-so that we can build a process for Laos that can eventually be used for other countries.

@@ -1,4 +1,6 @@
 
+# set_pano("bbetz@usaid.gov")
+
 load_secrets()
 
 # set_paths(folderpath_msd = "Data",
@@ -11,37 +13,22 @@ load_secrets()
 
 sess <- grabr::pano_session(username = pano_user(), password = pano_pwd())
 
-
 # Extract data items details
 url <- "https://pepfar-panorama.org/forms/downloads/"
 
-cont <- grabr::pano_content(page_url = url, session = sess)
+dir_items <- pano_items(page_url = url, 
+                        username = pano_user(),
+                        password = pano_pwd()) 
 
-
-# Download most recent PSNUxIM MSD ------------------------------------------------
-# Extract data items details
-dirs <- grabr::pano_elements(page_html = cont)
-
-dir_mer_path <- dirs %>%
+# Extract data items details, and url
+dir_mer_path <- dir_items %>%
   filter(str_detect(item, "^MER")) %>%
   pull(path)
 
-mer_items <- grabr::pano_content(page_url = dir_mer_path, session = sess) %>%
-  grabr::pano_elements(page_url = dir_mer_path)
-# Extract MER data items details from HTML CODE
-dest_path <- paste0(si_path(),"/Temp/")
+# pull latest pOUXim MSD URL ---------------------------------------------------------
+url_ou_im <- pano_items(page_url = dir_mer_path) |> filter(str_detect(item, "OU_IM_FY2")) |> pull(path)
 
-
-# pull latest pOUXim MSD ---------------------------------------------------------
-url_ou_im <- mer_items %>%
-  filter(type == "file zip_file",
-         str_detect(item, ".*_OU_IM_FY2.*.zip$")) %>%
-  pull(path) %>%
-  first() 
-
-
-
-# quick fix to filepaths --------------------------------------------------------
+# Download most recent PSNUxIM MSD ------------------------------------------------
 grabr::pano_download(item_url = url_ou_im, session = sess)
 
 
@@ -49,7 +36,7 @@ grabr::pano_download(item_url = url_ou_im, session = sess)
 
 # read OUxIM MSD, filter and condense---------------------------------------------
 file <- glamr::return_latest("Data/", "OU_IM_FY2") %>% print()
-msd <- read_msd(file, save_rds = TRUE, remove_txt = FALSE) %>%  filter(
+msd <- read_psd(file, save_rds = TRUE, remove_txt = FALSE) %>%  filter(
   str_detect(standardizeddisaggregate, "KeyPop|Total") == TRUE,
   funding_agency == "USAID") %>% 
   mutate(fy = fiscal_year,

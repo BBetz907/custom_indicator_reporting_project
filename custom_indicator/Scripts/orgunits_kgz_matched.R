@@ -17,6 +17,8 @@ kgz_info <- complete_clean_data %>% filter(country=="Kyrgyzstan") %>%
     snu_2 = str_to_title(snu_2),
   )
 
+kgz_info |> filter(str_detect(snu_1, "Osh Oblast")) |> select(starts_with("SNU"))
+
 table(kgz_info$snu_3) #snu3 level should match to level 7 in datim
 
 
@@ -29,15 +31,14 @@ kgz7op <- df_orgs$kgz_orgs %>%
   filter(orgunit_level  == "7") %>% select(orgunit_level:orgunit_name) 
 kgz7uid <- c(kgz7op$orgunit_uid)
 
-kgz8op <- df_orgs$kgz_orgs %>% 
+kgz6op <- df_orgs$kgz_orgs %>% 
   mutate(orgunit_parent  = str_to_title(orgunit_parent),
          orgunit_parent  = str_replace(orgunit_parent, "\\s\\s", "\\s"), 
          orgunit_name  = str_to_title(orgunit_name),
          orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print() %>%
-  filter(orgunit_level  == "8") %>% select(orgunit_level:orgunit_name)
-kgz8uid <- c(kgz8op$orgunit_uid)
-
-
+  filter(orgunit_level  == "6") %>% select(orgunit_level:orgunit_name) 
+kgz6uid <- c(kgz6op$orgunit_uid)
+kgz6op |> filter(str_detect(orgunit_name, "Aravan") )
 ################################################################################
 
 
@@ -55,7 +56,7 @@ nrow(kgz7m1)
 kgz71 <- kgz7m1 %>%
   anti_join(kgz7op) %>% print()
 #resolve discrepancies
-
+kgz71 |> count(snu_1, snu_2)
 
 #now match on level 2 names
 kgz7m <- kgz7m1 %>% inner_join(kgz7op) %>% # or inner if there are non-matches 
@@ -75,8 +76,13 @@ kgz7m %>% filter(is.na(orgunituid))
 
 
 
+# match 2 to 7 ------------------------------------------------------------
+kgz6 <- kgz71 |> select(-starts_with("org")) |> 
+  rename(orgunit_name = snu_2) |> 
+  inner_join(kgz6op) |> glimpse()
 
-kgz <- bind_rows(kgz7, kgz7m) %>% select(-contains("snu")) 
+
+kgz <- bind_rows(kgz7, kgz7m, kgz6) %>% select(-contains("snu")) 
 #check to see if number of rows matches source
 nrow(kgz) - nrow(kgz_info)
 

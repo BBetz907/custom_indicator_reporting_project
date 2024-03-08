@@ -18,3 +18,4 @@ vnm_6_merge <- left_join(vnm_6_clean, vnm_orgunit_table, by = join_by(orgunit_5_
   rename(psnu = orgunit_4, psnu_uid = orgunit_4_uid)
 
 vnm_merge_psnu <- bind_rows(vnm_6_merge, vnm_5_clean)
+nrow(vnm_merge_psnu) - nrow(vnm_info)

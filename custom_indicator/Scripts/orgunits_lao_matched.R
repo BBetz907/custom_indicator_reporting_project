@@ -58,4 +58,4 @@ lao <- bind_rows(lao7, lao5) %>% select(-contains("snu")) %>% glimpse()
 nrow(lao) - nrow(lao_info) 
 #number of rows
 
-lao_info |> print(n=130)
+# lao_info |> print(n=130)
