@@ -8,10 +8,8 @@ library(strex)
 library(keyring)
 library(gagglr)
 library(grabr)
-library(purrr)
 library(glue)
 # si_setup()
-
 
 # order of files ----------------------------------------------------------
 

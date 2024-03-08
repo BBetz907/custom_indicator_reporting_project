@@ -10,4 +10,3 @@ orgunit_levels <- grabr::get_levels(
 
 # write_csv(orgunit_levels, "Data/orgunit_levels_by_ou.csv")
 # orgunit_levels <- read.csv("Data/orgunit_levels_by_ou.csv")
-
