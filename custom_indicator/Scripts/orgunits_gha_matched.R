@@ -17,17 +17,17 @@ snu2 <- c(unique(gha_info$snu_2)) %>% print()
 snu1 <- c(unique(gha_info$snu_1)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-gha8op <- gha_7_8 %>% filter(orgunit_level  == "8") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
+gha8op <- df_orgs$gha_orgs %>% filter(orgunit_level  == "8") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
 gha8uid <- c(gha8op$orgunit_uid)
 unique(gha8op$orgunit_name)
 
-gha7op <- gha_7_8 %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+gha7op <- df_orgs$gha_orgs %>% filter(orgunit_level  == "7") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 gha7uid <- c(gha7op$orgunit_uid)
 unique(gha7op$orgunit_name)
 
 
-gha_7_8 %>% filter(orgunit_name %in% snu4) #snu4 should match datim level 8
-gha_7_8 %>% filter(orgunit_name %in% snu3) #snu3 should match datim level 7
+df_orgs$gha_orgs %>% filter(orgunit_name %in% snu4) #snu4 should match datim level 8
+df_orgs$gha_orgs %>% filter(orgunit_name %in% snu3) #snu3 should match datim level 7
 
 
 ################################################################################

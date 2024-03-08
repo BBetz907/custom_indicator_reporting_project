@@ -17,11 +17,11 @@ snu2 <- c(unique(sen_info$snu_2)) %>% print()
 snu1 <- c(unique(sen_info$snu_1)) %>% print()
 
 # get orgunit levels to match and join ------------------------------------
-sen6op <- sen_6_7 %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
+sen6op <- df_orgs$sen_orgs %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
 sen6uid <- c(sen6op$orgunit_uid)
 unique(sen6op$orgunit_name)
 
-sen6op <- sen_6_7 %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
+sen6op <- df_orgs$sen_orgs %>% filter(orgunit_level  == "6") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name) 
 sen6uid <- c(sen6op$orgunit_uid)
 unique(sen6op$orgunit_name)
 

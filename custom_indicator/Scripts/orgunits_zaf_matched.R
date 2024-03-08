@@ -27,11 +27,21 @@ unique(zaf_info$snu_2) #snu2 level should match to level 5 in datim
 
 
 # get orgunit levels to match and join ------------------------------------
-zaf5op <- zaf_4_5 %>% filter(orgunit_level  == "5") %>% select(orgunit_level:orgunit_name) %>% print()
+zaf5op <- df_orgs$zaf_orgs %>%
+  mutate(orgunit_parent  = str_to_title(orgunit_parent),
+         orgunit_parent  = str_replace(orgunit_parent, "\\s\\s", "\\s"), 
+         orgunit_name  = str_to_title(orgunit_name),
+         orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print() %>%
+  filter(orgunit_level  == "5") %>% select(orgunit_level:orgunit_name) %>% print()
 zaf5uid <- c(zaf5op$orgunit_uid)
 unique(zaf5op$orgunit_name)
 
-zaf4op <- zaf_4_5 %>% filter(orgunit_level  == "4") %>% select(orgunit_level:orgunit_name) %>% print()
+zaf4op <- df_orgs$zaf_orgs %>%
+  mutate(orgunit_parent  = str_to_title(orgunit_parent),
+         orgunit_parent  = str_replace(orgunit_parent, "\\s\\s", "\\s"), 
+         orgunit_name  = str_to_title(orgunit_name),
+         orgunit_name  = str_replace(orgunit_name, "\\s\\s", "\\s")) %>% print() %>%
+  filter(orgunit_level  == "4") %>% select(orgunit_level:orgunit_name) %>% print()
 zaf4uid <- c(zaf4op$orgunit_uid)
 unique(zaf4op$orgunit_name)
 ################################################################################
