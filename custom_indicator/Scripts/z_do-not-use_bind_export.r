@@ -75,38 +75,40 @@ write_empty_filename_by_ou <- function(operating_units) {
                      str_replace_all(as.character(today()), "-", "_"), ".xlsx")
   write_csv(dummy, filename2, na = "")
 }
-#### be careful not to overwrite
-# map(operating_units, write_empty_filename_by_ou)
+
+map(operating_units, write_empty_filename_by_ou)
 
 
-# 
-# for (i in ous){
-#   ou_file <- subset(ci, ou %in% i)
-#   write.csv(ou_file, paste0("Dataout/", reportingperiod, "/", i, ".csv"), na = "", row.names = FALSE)
-# }
-
-write.csv(ci, paste0("Dataout/", reportingperiod, "/Global_.csv"), na = "", row.names = FALSE)
+write_csv(ci, paste0("Dataout/", reportingperiod, "/Global_.csv"), na = "")
 
 reportingperiod_selected <- str_replace(current_q, "_", " ")
-ci_read <- read_csv(paste0("Dataout/", reportingperiod_selected, "/Global_.csv"))
+ci_read <- read_csv(paste0("Dataout/", reportingperiod_selected, "/Global_.csv")) 
+  
 
-# output_path <- paste0("Dataout/", currentq, "/")
-# output_names <- list.files(output_path, pattern = "[A-Z, a-z]\\.csv$")
-# output_path_names <- paste0(output_path, output_names)
-# ci_read <- map_dfr(.x= output_path_names, .f = read_csv)
-
-ci_read |> count(ou, indicator) |> pivot_wider(names_from = indicator, values_from = n) |> relocate(TX_PVLS_ELIGIBLE, .before = PrEP_CT_VERIFY) |> 
+# assess indicators reported
+ci_read  |> 
+  count(ou, indicator) |> 
+  pivot_wider(names_from = indicator, values_from = n) |>
+  relocate(TX_PVLS_ELIGIBLE, .before = PrEP_CT_VERIFY) |> 
   mutate_at(c(2:9), ~replace_na(.,0))
 
-# rm(list = ls()[grepl("bwa", ls())])
-# ci <- ci_read
+# assess technical areas covered by indicators reported
+ci_read |> mutate(technical_area = case_when(str_detect(indicator, "PrEP") ~ "PrEP",
+                                             indicator == "TX_PVLS_ELIGIBLE" ~ "Lab",
+                                             str_detect(indicator, "TX") ~ "Key_Populations",
+                                             str_detect(str_to_lower(indicator), "gen") ~ "Gender",
+                                                                                              )) |> 
+  count(ou, technical_area) |> 
+  pivot_wider(names_from = technical_area, values_from = n) |> print()
+  # relocate(TX_PVLS_ELIGIBLE, .before = PrEP_CT_VERIFY) |> 
+  # mutate_at(c(2:9), ~replace_na(.,0))
 
-# these efforts to write directly  :()
-# wb <- loadWorkbook(paste0("Dataout/FY23 CIRG Submission - Long - All Technical Areas (updated 01.17.2023) unprotected.xlsx"))
-# ci_ou_reportingperiod <- ci[1,] |> select(ou, reportingperiod)
-# writeData(wb, sheet = "meta", x = ci_ou_reportingperiod, startCol = 2, startRow = 2, colNames = FALSE)
-# ci_ou  <- c(ci_ou_reportingperiod[1])
-# ci_ou1 <- ci |> filter(ou == ci_ou)
-# writeData(wb, sheet = 2, x = ci_ou1, startCol = 1, startRow = 4, colNames = TRUE)
-# saveWorkbook(wb, paste0("Dataout/", reportingperiod, "/Submissions/", ci_ou, ".xlsx"), overwrite=TRUE)
+
+# rename files ------------------------------------------------------------
+
+
+# $ for file in *02_14.xlsx; do mv "$file" "${file/02_14.xlsx/03_12.xlsx}"; done
+
+# data check
+ci_fhi |> filter(str_detect(country, "Vietnam"), !is.na(population)) |> group_by(country, indicator) |> summarise(value = sum(value))
 

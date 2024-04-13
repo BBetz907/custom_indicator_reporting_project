@@ -53,9 +53,16 @@ lao5_dup <- lao5 %>%  select(value, indicator, age, sex, otherdisaggregate, numd
 
 
 
-lao <- bind_rows(lao7, lao5) %>% select(-contains("snu")) %>% glimpse()
+lao <- bind_rows(lao7, lao5) %>% select(-contains("snu")) %>% 
+  ## fix rejection issue, which seems erroneous
+  mutate(orgunit = if_else(orgunituid == "vstSzR4GQ0A", orgunit_parent, orgunit),
+         orgunituid = if_else(orgunituid == "vstSzR4GQ0A", orgunit_parent_uid, orgunituid)) |> 
+  glimpse()
 #check to see if number of rows matches source
 nrow(lao) - nrow(lao_info) 
 #number of rows
 
+# lao |> count(orgunit, orgunituid)
+# lao |> filter(orgunituid == "vstSzR4GQ0A") |> count(orgunit, orgunituid) 
+# lao |> filter(indicator=="PrEP_OFFER") |> group_by(indicator, population, ) |> summarise(value=sum(value))
 # lao_info |> print(n=130)

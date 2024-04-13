@@ -79,12 +79,14 @@ kgz7m %>% filter(is.na(orgunituid))
 # match 2 to 7 ------------------------------------------------------------
 kgz6 <- kgz71 |> select(-starts_with("org")) |> 
   rename(orgunit_name = snu_2) |> 
-  inner_join(kgz6op) |> glimpse()
+  inner_join(kgz6op) |> 
+  rename(orgunituid = orgunit_uid,
+         orgunit = orgunit_name) |> 
+  glimpse()
 
 
 kgz <- bind_rows(kgz7, kgz7m, kgz6) %>% select(-contains("snu")) 
 #check to see if number of rows matches source
 nrow(kgz) - nrow(kgz_info)
-
 
 #later bind country dfs together

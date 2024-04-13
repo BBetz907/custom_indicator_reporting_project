@@ -1,5 +1,5 @@
 
-# set_pano("bbetz@usaid.gov")
+set_pano("bbetz@usaid.gov")
 
 load_secrets()
 

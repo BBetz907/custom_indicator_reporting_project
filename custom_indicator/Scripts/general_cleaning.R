@@ -12,6 +12,7 @@ currentq <- toupper(str_replace_all(current_q, "_", " "))
 
 # identify files ----------------------------------------------------------
 files <- list.files(path="data",pattern = current_q) %>% paste("data/",.) %>% str_replace(" ", "") 
+files
 kp_disaggs_counts <- files %>% keep(grepl("kp_disaggs_counts", files))
 age_sex_counts <- files %>% keep(grepl("age_sex_counts", files))
 age_sex_snapshots <- files %>% keep(grepl("snapshot", files))
@@ -45,22 +46,23 @@ kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names %>%
 age_sex_counts <- read.csv(age_sex_counts)
 
 age_sex_counts_clean <- age_sex_counts %>% clean_names() %>% 
-  dplyr::rename(indicator = data_element_short_name, otherdisaggregate = pepfar, age = all_age_groups) %>%
+  dplyr::rename(indicator = data_element_short_name, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
   mutate(numdenom = if_else(numdenom == "(D)", "Denominator", "Numerator"),
-         otherdisaggregate = case_when(otherdisaggregate == "NON-PEPFAR Supported Site" ~"non-PEPFAR",
-                                       otherdisaggregate =="PEPFAR Supported Site" ~ "PEPFAR",
-                                       ),
-         otherdisaggregate = case_when(indicator %in% site_type_indicators ~ as.character(otherdisaggregate)),
+         ### remove PEPFAR support type from age/sex disaggs
+         # otherdisaggregate = case_when(otherdisaggregate == "NON-PEPFAR Supported Site" ~"non-PEPFAR",
+         #                               otherdisaggregate =="PEPFAR Supported Site" ~ "PEPFAR",
+         #                               ),
+         # otherdisaggregate = case_when(indicator %in% site_type_indicators ~ as.character(otherdisaggregate)),
          age = recode(age,
                       "<1" = "<01",
                       "1-4" = "01-04",
                       "5-9" = "05-09",
                       "Age Unknown" = "Unknown Age"),
          age = if_else(indicator %in% indicators_less_than_20 & age %in% less_than_20, "<20", as.character(age))) %>%
-  select(reportingperiod, country, contains("snu"), indicator, sex, age, otherdisaggregate, numdenom, value)%>%
-  dplyr::group_by(reportingperiod, country,  snu_1, snu_2, snu_3, snu_4, snu_1_id, snu_2_id, snu_3_id, snu_4_id, indicator, sex, age, otherdisaggregate, numdenom) %>%
+  select(reportingperiod, country, contains("snu"), indicator, sex, age, numdenom, value)%>%
+  dplyr::group_by(reportingperiod, country,  snu_1, snu_2, snu_3, snu_4, snu_1_id, snu_2_id, snu_3_id, snu_4_id, indicator, sex, age, numdenom) %>%
   dplyr::summarise(value = sum(value), .groups = "drop")
 
 
@@ -71,9 +73,12 @@ age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% clean_names()
   mutate(numdenom = if_else(numdenom == "(D)", "Denominator", "Numerator"),
          indicator = recode(indicator,
                             "TX_PVLS_ELIGIBLE_VERIFY" = "TX_PVLS_ELIGIBLE"),
-         otherdisaggregate = recode(otherdisaggregate,
-                                    "NON-PEPFAR Supported Site" = "non-PEPFAR",
-                                    "PEPFAR Supported Site" = "PEPFAR"), 
+         otherdisaggregate = case_when(!str_detect(otherdisaggregate, "PEPFAR") ~ otherdisaggregate,
+                                       .default = NA),
+         ### remove PEPFAR support type from age/sex disaggs
+         # otherdisaggregate = recode(otherdisaggregate,
+         #                            "NON-PEPFAR Supported Site" = "non-PEPFAR",
+         #                            "PEPFAR Supported Site" = "PEPFAR"), 
          filter = case_when(indicator %in% snapshot_indicators & !(month_name %in% last_month) ~ "DEL",
                             TRUE ~ "KEEP"), # try changing this using subset function, keep this here
          otherdisaggregate = case_when(indicator %in% site_type_indicators ~ as.character(otherdisaggregate)),
