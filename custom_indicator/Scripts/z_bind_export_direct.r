@@ -8,7 +8,6 @@ col_order <- c("reportingperiod", "orgunit", "orgunituid",
 mission2report <- c("Eswatini", "Cote d'Ivoire")
 
 
-
 # bind and process files for submission -----------------------------------------
 
 
@@ -19,7 +18,7 @@ ci_fhi <- do.call(bind_rows, lapply(ls(pattern = "_merge_psnu"), get)) %>%
          str_to_lower(reportingperiod) == str_replace(current_q, "_", " "))
 
 ci_fhi |> count(str_to_lower(reportingperiod))
-str_replace(current_q, "_", " ")
+# str_replace(current_q, "_", " ")
 
 #prepare data for export by selecting reporting columns and summarizing by reported columns
 ci_fhi360 <-  ci_fhi %>%  select(reportingperiod, orgunit, orgunituid,
@@ -51,17 +50,18 @@ reportingperiod <- unique(c(ci$reportingperiod))
 
 
 
-
+library(openxlsx)
 # define functions for exporting each sheet together in the output -------------------------------
 write_excel_output_by_ou <- function(operating_units) {
   
 ## CIRG Tab
   ### Recode integer as character and rename ou to simplify union of header and data
-  ci_str <- ci |> mutate(value = as.character(value)) |> rename(operatingunit=ou)
+  ci_str <- ci |> rename(operatingunit=ou) 
   ### Create OU-specific frames to write to separate files
   subset_ci <- subset(ci_str, operatingunit %in% operating_units)
   ### Extract CIRG worksheet headers from template to union with data for each OU
-  head3r_cirg <- readxl::read_excel(paste0("Dataout/", "/Template.xlsx"), sheet = "CIRG") 
+  head3r_cirg <- readxl::read_excel(paste0("Dataout/", "/Template.xlsx"), sheet = "CIRG") |> 
+    select(-value) |> mutate(value = 0)
   ### Union header and data values
   cirg_ws <- head3r_cirg |> bind_rows(subset_ci)
   
@@ -86,10 +86,12 @@ write_excel_output_by_ou <- function(operating_units) {
   addWorksheet(wb, "CIRG")
   writeData(wb, sheet = "meta", meta_ws, startCol = 2)
   writeData(wb, sheet = "CIRG", cirg_ws, borders = "columns")
+  writeData(wb, "CIRG", c("CIRG RESULT VALUE", "value"), startCol = 14, startRow = 2:3) #restore header for quantitative output field
   saveWorkbook(wb, filename2, overwrite = TRUE)
 
 }
 
+# write_excel_output_by_ou(operating_units = "Tanzania")
 
 # run direct output for each OU
 map(operating_units, write_excel_output_by_ou)
@@ -125,5 +127,10 @@ ci_read |> mutate(technical_area = case_when(str_detect(indicator, "PrEP") ~ "Pr
   # mutate_at(c(2:9), ~replace_na(.,0))
 
 # data check
-ci_fhi |> filter(str_detect(country, "Vietnam"), !is.na(population)) |> group_by(country, indicator) |> summarise(value = sum(value))
+ci_fhi|> filter(str_detect(country, "Liberia"), !is.na(population)) |> group_by(country, indicator) |> summarise(value = sum(value))
+
+
+#Data check
+ci_read |> filter(str_detect(orgunit, "Semey"), reportingperiod == "FY24 Q1", indicator=="TX_NEW_VERIFY") |> glimpse()
+
 

@@ -3,6 +3,7 @@ site_type_indicators <- c("TX_NEW_VERIFY","TX_CURR_VERIFY","TX_PVLS_VERIFY")
 last_month <- c("Dec","Mar","Jun","Sep")
 indicators_less_than_20 <- c("TX_NEW_VERIFY","TX_RTT_VERIFY","TX_CURR_VERIFY","TX_PVLS_VERIFY", "PrEP_OFFER","PrEP_CT_VERIFY", "PrEP_NEW_VERIFY")
 less_than_20 <- c("<01","01-04","05-09","10-14","15-19")
+more_than_50 <- c("50-54","55-59","60-64","65+")
 keypop <- c("FSW","MSM","PWID","TG","Prison")
 
 
@@ -55,12 +56,17 @@ age_sex_counts_clean <- age_sex_counts %>% clean_names() %>%
          #                               otherdisaggregate =="PEPFAR Supported Site" ~ "PEPFAR",
          #                               ),
          # otherdisaggregate = case_when(indicator %in% site_type_indicators ~ as.character(otherdisaggregate)),
+         age = str_remove_all(age, "\\sYears"),
          age = recode(age,
                       "<1" = "<01",
                       "1-4" = "01-04",
                       "5-9" = "05-09",
                       "Age Unknown" = "Unknown Age"),
-         age = if_else(indicator %in% indicators_less_than_20 & age %in% less_than_20, "<20", as.character(age))) %>%
+         age = case_when(indicator %in% indicators_less_than_20 & age %in% less_than_20 ~ "<20",
+                         str_detect(indicator, "PrEP") & age %in% more_than_50 ~ "50+",
+                        TRUE ~ age
+                        # .default = age
+                        )) %>%
   select(reportingperiod, country, contains("snu"), indicator, sex, age, numdenom, value)%>%
   dplyr::group_by(reportingperiod, country,  snu_1, snu_2, snu_3, snu_4, snu_1_id, snu_2_id, snu_3_id, snu_4_id, indicator, sex, age, numdenom) %>%
   dplyr::summarise(value = sum(value), .groups = "drop")
@@ -82,6 +88,7 @@ age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% clean_names()
          filter = case_when(indicator %in% snapshot_indicators & !(month_name %in% last_month) ~ "DEL",
                             TRUE ~ "KEEP"), # try changing this using subset function, keep this here
          otherdisaggregate = case_when(indicator %in% site_type_indicators ~ as.character(otherdisaggregate)),
+         age = str_remove_all(age, "\\sYears"),
          age = recode(age,
                       "<1" = "<01",
                       "1-4" = "01-04",
@@ -100,3 +107,5 @@ complete_clean_data_pre_mech <- bind_rows(age_sex_counts_clean, age_sex_snapshot
          indicator = recode(indicator, "TX_PVLS_ELIGIBLE_VERIFY" = "TX_PVLS_ELIGIBLE")) %>%
   relocate(population, .after = "otherdisaggregate")
 
+#DATA CHECK
+complete_clean_data |> filter(str_detect(country, "^K.+stan$"), reportingperiod == "FY24 Q1", indicator=="TX_NEW_VERIFY")

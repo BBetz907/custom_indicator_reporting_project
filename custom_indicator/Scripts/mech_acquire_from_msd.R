@@ -1,5 +1,5 @@
 
-set_pano("bbetz@usaid.gov")
+# set_pano("bbetz@usaid.gov")
 
 load_secrets()
 
@@ -36,7 +36,7 @@ grabr::pano_download(item_url = url_ou_im, session = sess)
 
 # read OUxIM MSD, filter and condense---------------------------------------------
 file <- glamr::return_latest("Data/", "OU_IM_FY2") %>% print()
-msd <- read_psd(file, save_rds = TRUE, remove_txt = FALSE) %>%  filter(
+msd <- read_psd(file) %>%  filter(
   str_detect(standardizeddisaggregate, "KeyPop|Total") == TRUE,
   funding_agency == "USAID") %>% 
   mutate(fy = fiscal_year,
