@@ -60,10 +60,7 @@ write_excel_output_by_ou <- function(operating_units) {
   ### Create OU-specific frames to write to separate files
   subset_ci <- subset(ci_str, operatingunit %in% operating_units)
   ### Extract CIRG worksheet headers from template to union with data for each OU
-  head3r_cirg <- readxl::read_excel(paste0("Dataout/", "/Template.xlsx"), sheet = "CIRG") |> 
-    select(-value) |> mutate(value = 0)
-  ### Union header and data values
-  cirg_ws <- head3r_cirg |> bind_rows(subset_ci)
+  head3r_cirg <- readxl::read_excel(paste0("Dataout/", "/Template.xlsx"), sheet = "CIRG", range = "A1:N2")
   
 ## meta Tab
   ### Read and group OU and reporting period data to input values into fields
@@ -85,13 +82,13 @@ write_excel_output_by_ou <- function(operating_units) {
   addWorksheet(wb, "meta")
   addWorksheet(wb, "CIRG")
   writeData(wb, sheet = "meta", meta_ws, startCol = 2)
-  writeData(wb, sheet = "CIRG", cirg_ws, borders = "columns")
-  writeData(wb, "CIRG", c("CIRG RESULT VALUE", "value"), startCol = 14, startRow = 2:3) #restore header for quantitative output field
+  writeData(wb, sheet = "CIRG", subset_ci, borders = "columns", startCol = 1, startRow = 3)
+  writeData(wb, sheet = "CIRG", head3r_cirg, borders = "columns", startCol = 1, startRow = 1) #restore header for quantitative output field
   saveWorkbook(wb, filename2, overwrite = TRUE)
 
 }
 
-# write_excel_output_by_ou(operating_units = "Tanzania")
+# write_excel_output_by_ou(operating_units = "Botswana")
 
 # run direct output for each OU
 map(operating_units, write_excel_output_by_ou)
