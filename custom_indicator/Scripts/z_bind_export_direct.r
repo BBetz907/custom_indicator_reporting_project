@@ -103,7 +103,7 @@ write_csv(ci, paste0("Dataout/", reportingperiod, "/Global_.csv"), na = "")
 
 
 # explore data after clearing environment  -------------------------------
-reportingperiod_selected <- str_replace(current_q, "_", " ")
+reportingperiod_selected <- str_replace(reportingperiod, "_", " ")
 ci_read <- read_csv(paste0("Dataout/", reportingperiod_selected, "/Global_.csv")) 
   
 
