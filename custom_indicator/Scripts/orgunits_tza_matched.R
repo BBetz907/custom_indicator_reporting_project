@@ -25,7 +25,7 @@ tza5org <- c(tza5op$orgunit_name)
 ################################################################################
 
 # for level 4 that match_level 7, use snu_4_id -----------------------
-tza7<- tza_info %>% filter(snu_4_id %in% tza7uid) %>% select(-snu_1_id:-snu_3_id) %>% 
+tza7<- tza_info %>% filter(snu_4_id %in% tza7uid, snu_4 != "") %>% select(-snu_1_id:-snu_3_id) %>% 
   rename(orgunit_uid  = snu_4_id) %>% inner_join(tza7op) %>%  
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>% 
 glimpse()
@@ -46,7 +46,7 @@ tza7op %>% filter(str_detect(orgunit_parent, "Makum")) #this will be matched one
 
 
 #now match
-tza7m <- tza7m1 %>% inner_join(tza7op) %>% # or inner if there are non-matches 
+tza7m <- tza7m1 %>% inner_join(tza7op, by = c("orgunit_name" = "orgunit_name", "snu_3" ="orgunit_parent")) %>% # or inner if there are non-matches 
   select(-snu_1_id:-snu_4_id) %>%
   rename(orgunituid = orgunit_uid, orgunit = orgunit_name) %>%
   glimpse() #check if the tibble nrow matches the previous count. if it exceeds there is some double matching
@@ -62,10 +62,15 @@ tza7m %>% filter(is.na(orgunituid))
 
 #left to match below level 7
 nrow(tza_info) - nrow(tza7) - nrow(tza7m)
+# tza_7_completed <- tza7 |> count(snu_4) |> print()
+# tza_7_completed2 <- tza7m |> count(orgunit) |> rename(snu_4=orgunit) |> print()
+# tza7_anti_list <- rbind(tza_7_completed, tza_7_completed2)
 ##############################################################################
 
 # check for nonmatched, use going forward
-tza6_unmatched_at_7 <- tza_info %>% filter(!snu_4 %in% tza7org, !snu_4_id %in% tza7uid) %>% print()
+tza6_unmatched_at_7 <- tza_info %>% 
+  filter(!snu_4 %in% tza7org, !snu_4_id %in% tza7uid) %>% 
+  anti_join(tza_7_completed2 ) |> print()
 
 ##############################################################################
 nrow(tza6_unmatched_at_7)

@@ -37,7 +37,8 @@ tza_7_merge <- left_join(tza_7_clean, tza_orgunit_table, by = join_by(orgunituid
 
 tza_orgunit_table6 <- tza_orgunit_table |> group_by(across(orgunit_3:orgunit_6)) |> summarise( .groups = "drop") 
 tza_6_merge <- left_join(tza_6_clean, tza_orgunit_table6, by = join_by(orgunituid == orgunit_6_uid, orgunit == orgunit_6), multiple = "all", relationship = "many-to-one") %>% 
-  select(-c(contains("orgunit_6"), contains("orgunit_5"), contains("orgunit_3"))) %>% distinct() %>%
+  select(-c(contains("orgunit_6"), contains("orgunit_5"), contains("orgunit_3"))) %>% 
+  # distinct() %>%
   rename(psnu = orgunit_4, psnu_uid = orgunit_4_uid)
 
 tza_orgunit_table5 <- tza_orgunit_table |> group_by(across(orgunit_3:orgunit_5)) |> summarise( .groups = "drop") 

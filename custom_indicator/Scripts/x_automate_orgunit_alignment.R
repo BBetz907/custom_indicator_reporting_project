@@ -4,9 +4,8 @@
 
 orgunit_recode_filenames <- list.files(path="Scripts", pattern = "_matched.R|_psnu.R") |>   
   #no Burundi or Ghana data in FY24
-  keep(~!str_detect(., "gha|bdi")) |> 
+  keep(~!str_detect(., "gha|bdi|vnm")) |> 
   print()
-
 
 
 orgunit_recode_filepaths <- str_c("Scripts/", orgunit_recode_filenames
@@ -40,3 +39,5 @@ country_code_original <- country_codes |> str_c("_info")
 difference <- map2(country_codes, country_code_original, ~ nrow(get(.x)) - nrow(get(.y)))
 names(difference) <- country_codes
 imap(difference, ~ cat(.y, "difference:", .x, "\n"))
+
+#distinct is only necessary where multiple levels must be merged. In that case use it to prevent multiple matches at the PSNU stage when you merge and not after (see MMR)

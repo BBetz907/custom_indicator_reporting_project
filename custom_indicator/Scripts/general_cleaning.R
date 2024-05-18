@@ -8,7 +8,7 @@ keypop <- c("FSW","MSM","PWID","TG","Prison")
 
 
 # Select Current Quarter --------------------------------------------------
-current_q <- "fy24_q1"
+current_q <- "fy24_q2"
 currentq <- toupper(str_replace_all(current_q, "_", " "))
 
 # identify files ----------------------------------------------------------
@@ -21,8 +21,8 @@ age_sex_snapshots <- files %>% keep(grepl("snapshot", files))
 #KP disaggs cleaning
 kp_disaggs_counts <- read.csv(kp_disaggs_counts)
 
-kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names %>% 
-  dplyr::rename(indicator = data_element_short_name, population = all_target_populations, otherdisaggregate = pepfar) %>% 
+kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names() %>% 
+  dplyr::rename(indicator = indicators, population = populations, otherdisaggregate = pepfar) %>% 
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>% 
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
   mutate(numdenom = if_else(numdenom == "(D)", "Denominator", "Numerator"),
@@ -47,7 +47,7 @@ kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names %>%
 age_sex_counts <- read.csv(age_sex_counts)
 
 age_sex_counts_clean <- age_sex_counts %>% clean_names() %>% 
-  dplyr::rename(indicator = data_element_short_name, age = all_age_groups) %>%
+  dplyr::rename(indicator = indicators, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
   mutate(numdenom = if_else(numdenom == "(D)", "Denominator", "Numerator"),
@@ -73,7 +73,7 @@ age_sex_counts_clean <- age_sex_counts %>% clean_names() %>%
 
 
 age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% clean_names() %>%
-  dplyr::rename(indicator = data_element_short_name, otherdisaggregate = pepfar, age = all_age_groups) %>%
+  dplyr::rename(indicator = indicators, otherdisaggregate = pepfar, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
   mutate(numdenom = if_else(numdenom == "(D)", "Denominator", "Numerator"),
@@ -108,4 +108,4 @@ complete_clean_data_pre_mech <- bind_rows(age_sex_counts_clean, age_sex_snapshot
   relocate(population, .after = "otherdisaggregate")
 
 #DATA CHECK
-complete_clean_data |> filter(str_detect(country, "^K.+stan$"), reportingperiod == "FY24 Q1", indicator=="TX_NEW_VERIFY")
+# complete_clean_data |> filter(str_detect(country, "^K.+stan$"), reportingperiod == "FY24 Q2", indicator=="TX_NEW_VERIFY")

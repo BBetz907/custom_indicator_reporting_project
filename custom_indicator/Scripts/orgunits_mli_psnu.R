@@ -14,7 +14,8 @@ mli_orgunit_table <- reduce(mli_org_levels, full_join)
 mli_clean <- mli %>% rename(orgunit_6 = orgunit_parent, orgunit_6_uid = orgunit_parent_uid)
 
 mli_merge_psnu <- left_join(mli_clean, mli_orgunit_table, by = join_by(orgunituid == orgunit_6_uid, orgunit == orgunit_6), multiple = "all", relationship = "many-to-one") %>% 
-  select(-c(contains("orgunit_7"), contains("orgunit_6"), contains("orgunit_4"))) %>% distinct() %>%
+  select(-c(contains("orgunit_7"), contains("orgunit_6"), contains("orgunit_4"))) %>% 
+  # distinct() %>%
   rename(psnu = orgunit_5, psnu_uid = orgunit_5_uid)
 
 nrow(mli_clean) - nrow(mli_merge_psnu)

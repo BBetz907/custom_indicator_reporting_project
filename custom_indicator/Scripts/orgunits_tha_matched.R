@@ -34,6 +34,10 @@ tha6op <- df_orgs$tha_orgs %>% filter(orgunit_level  == "6") %>% arrange(orgunit
 tha6uid <- c(tha6op$orgunit_uid)
 unique(tha6op$orgunit_name)
 
+tha5op <- df_orgs$tha_orgs %>% filter(orgunit_level  == "5") %>% arrange(orgunit_name) %>% select(orgunit_level:orgunit_name)
+tha5uid <- c(tha5op$orgunit_uid)
+unique(tha5op$orgunit_name)
+
 df_orgs$tha_orgs %>% filter(orgunit_name %in% snu3) #snu3 should match datim level 7
 df_orgs$tha_orgs %>% filter(orgunit_name %in% snu2) #snu2 should match datim level 6
 
@@ -83,11 +87,15 @@ tha6 <- tha7m1 %>% select(-orgunit_name) |>
 scales::percent(nrow(tha6)/nrow(tha_info))
 nrow(tha6)
 
+#check to match by level 5
+tha5 <- tha7m1 |> select(-orgunit_name) |> 
+  rename(orgunit_name = snu_1)  %>% inner_join(tha5op) %>%   
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) |> glimpse()
 
 
-
-tha <- tha7 %>% select(-contains("snu")) %>% 
+tha <- bind_rows(tha7, tha5) |>  select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(tha) - nrow(tha_info)
 # tha_info <- tha6
+

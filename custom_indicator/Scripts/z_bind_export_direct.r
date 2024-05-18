@@ -48,7 +48,9 @@ ci |> mutate(indicator_topic = str_extract(indicator, "PrEP|TX(?!_PVLS_ELIGIBLE)
 operating_units <- c(unique(ci$ou))
 reportingperiod <- unique(c(ci$reportingperiod))
 
-
+if (!dir.exists(str_c("Dataout/",str_to_upper(reportingperiod)))) {
+  dir.create(str_c("Dataout/", str_to_upper(reportingperiod)))
+}
 
 library(openxlsx)
 # define functions for exporting each sheet together in the output -------------------------------
@@ -73,7 +75,7 @@ write_excel_output_by_ou <- function(operating_units) {
            `CIRG Reporting Period` = subset_ci_meta$reportingperiod) 
 
 ## create filename
-  filename2 <- paste0("Dataout/", reportingperiod, "/Submissions/", "CIRG_", str_to_upper(current_q), "_", 
+  filename2 <- paste0("Dataout/", reportingperiod, "/", "CIRG_", str_to_upper(current_q), "_", 
                       str_replace_all(operating_units, " ", "_"), "_FHI360_EpiC_", 
                       str_replace_all(as.character(today()), "-", "_"), ".xlsx")
 
