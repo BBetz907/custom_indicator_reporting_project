@@ -8,7 +8,7 @@ keypop <- c("FSW","MSM","PWID","TG","Prison")
 
 
 # Select Current Quarter --------------------------------------------------
-current_q <- "fy24_q2"
+current_q <- "fy24_q3"
 currentq <- toupper(str_replace_all(current_q, "_", " "))
 
 # identify files ----------------------------------------------------------
@@ -21,7 +21,7 @@ age_sex_snapshots <- files %>% keep(grepl("snapshot", files))
 #KP disaggs cleaning
 kp_disaggs_counts <- read.csv(kp_disaggs_counts)
 
-kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names() %>% 
+kp_disaggs_counts_clean <- kp_disaggs_counts %>% janitor::clean_names() %>% 
   dplyr::rename(indicator = indicators, population = populations, otherdisaggregate = pepfar) %>% 
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>% 
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
@@ -46,7 +46,7 @@ kp_disaggs_counts_clean <- kp_disaggs_counts %>% clean_names() %>%
 
 age_sex_counts <- read.csv(age_sex_counts)
 
-age_sex_counts_clean <- age_sex_counts %>% clean_names() %>% 
+age_sex_counts_clean <- age_sex_counts %>% janitor::clean_names() %>% 
   dplyr::rename(indicator = indicators, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
@@ -72,7 +72,7 @@ age_sex_counts_clean <- age_sex_counts %>% clean_names() %>%
   dplyr::summarise(value = sum(value), .groups = "drop")
 
 
-age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% clean_names() %>%
+age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% janitor::clean_names() %>%
   dplyr::rename(indicator = indicators, otherdisaggregate = pepfar, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%

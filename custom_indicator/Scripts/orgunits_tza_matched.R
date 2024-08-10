@@ -63,7 +63,7 @@ tza7m %>% filter(is.na(orgunituid))
 #left to match below level 7
 nrow(tza_info) - nrow(tza7) - nrow(tza7m)
 # tza_7_completed <- tza7 |> count(snu_4) |> print()
-# tza_7_completed2 <- tza7m |> count(orgunit) |> rename(snu_4=orgunit) |> print()
+tza_7_completed2 <- tza7m |> count(orgunit) |> rename(snu_4=orgunit) |> print()
 # tza7_anti_list <- rbind(tza_7_completed, tza_7_completed2)
 ##############################################################################
 

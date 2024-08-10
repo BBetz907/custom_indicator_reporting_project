@@ -23,7 +23,7 @@ country_codes <- orgunit_recode_filenames |>
   str_extract("(?<=\\_)[a-z]{3}(?=\\_)") #extract code
 
 
-
+nrow(bfa)
 # test output again to ensure no missing data between orgunit alignment to PSNU level (step 2) ----------------------------------
 country_code_psnu <- country_codes |> str_c("_merge_psnu")
 
