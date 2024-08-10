@@ -130,6 +130,6 @@ ci_fhi|> filter(str_detect(country, "Liberia"), !is.na(population)) |> group_by(
 
 
 #Data check
-ci_read |> filter(str_detect(orgunit, "Semey"), reportingperiod == "FY24 Q1", indicator=="TX_NEW_VERIFY") |> glimpse()
+ci_read |> filter(str_detect(orgunit, "Semey"), reportingperiod == "FY24 Q3", indicator=="TX_NEW_VERIFY") |> glimpse()
 
 

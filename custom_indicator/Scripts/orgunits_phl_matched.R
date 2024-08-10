@@ -16,6 +16,7 @@ phl_info <- complete_clean_data %>% filter(country=="Philippines") %>%
          "Gen. Trias SHC" = "General Trias SHC",
          "Las Pinas SHC" = "Las Piñas SHC",
          "HASH-SHIP Clinic - CAMANAVA" = "HASH-SHIP CAMANAVA",
+         "TLF Share" = "TLF-SHARE"
          )) %>%
   clean_names() %>% print()
 
@@ -49,6 +50,8 @@ phl8m1 %>%
 #resolve discrepancies
 
 phl8op |> filter(str_detect(str_to_lower(orgunit_name), "camanava"))
+phl8m1 |> filter(str_detect(str_to_lower(orgunit_name), "tlf share"))
+
 
 #now match
 phl8m <- phl8m1 %>% inner_join(phl8op) %>% # or inner if there are non-matches 

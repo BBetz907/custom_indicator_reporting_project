@@ -2,10 +2,10 @@
 
 
 complete_clean_data_pre_mech %>%  select(country) %>% group_by_all() %>% summarise(.groups = "drop") %>% 
-  left_join(mech_id_ref_table_fy23, by = "country") %>% glimpse() %>% print(n=23)
+  left_join(mech_id_ref_table_fy24, by = "country") %>% glimpse() %>% print(n=23)
 
 #overwrite df after merge
-complete_clean_data <- left_join(complete_clean_data_pre_mech, mech_id_ref_table_fy23, by = "country") %>% 
+complete_clean_data <- left_join(complete_clean_data_pre_mech, mech_id_ref_table_fy24, by = "country") %>% 
   relocate(mech_code:mech_name, .after = "reportingperiod") %>%   
   mutate(
          # snu_4 = str_to_title(snu_4),

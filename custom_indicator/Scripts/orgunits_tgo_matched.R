@@ -40,12 +40,15 @@ tgo6 <- tgo_info %>% filter(snu_2_id %in% tgo6uid, snu_2!="") %>% select(-snu_1_
 scales::percent(nrow(tgo6)/nrow(tgo_info))
 
 # for level 2 that doesn't match level 6, match by snu_2 name --------
-tgo6m1 <- tgo_info %>% filter(!snu_2_id %in% tgo6uid, snu_2 != "") %>% rename(orgunit_name = snu_2)
+tgo6m1 <- tgo_info %>% filter(!snu_2_id %in% tgo6uid) %>% rename(orgunit_name = snu_2)
 scales::percent(nrow(tgo6m1)/nrow(tgo_info))
 nrow(tgo6m1)
 
+tgo_info
+
+
 #identify and resolve any failed matches
-non_matched_snu_2 <- tgo6m1 %>%
+tgo5m1 <- tgo6m1 %>%
   anti_join(tgo6op) %>% glimpse()
 ##resolve discrepancies
 # non_matched_snu_2_name <- unique(non_matched_snu_2$orgunit_name) %>% print()
@@ -68,9 +71,11 @@ tgo6m %>% select(value, indicator, age, sex, otherdisaggregate, numdenom, popula
   filter(n()>1)
 
 
-#check for unmatched
-tgo6m %>% filter(is.na(orgunituid)) 
 
+tgo5 <- tgo5m1 %>% mutate(orgunit_name = str_to_upper(snu_1)) %>% 
+  select(-contains("snu")) %>% 
+  inner_join(tgo5op) %>%  
+  rename(orgunituid = orgunit_uid, orgunit = orgunit_name) 
 
 ##############################################################################
 
@@ -114,7 +119,7 @@ tgo6m %>% filter(is.na(orgunituid))
 ###############################################################################
 
 
-tgo <- bind_rows(tgo6, tgo6m) %>% select(-contains("snu")) %>% 
+tgo <- bind_rows(tgo6, tgo6m, tgo5) %>% select(-contains("snu")) %>% 
   glimpse() 
 #check to see if number of rows matches source
 nrow(tgo) - nrow(tgo_info)

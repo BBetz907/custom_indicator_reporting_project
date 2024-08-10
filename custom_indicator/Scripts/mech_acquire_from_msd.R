@@ -47,3 +47,8 @@ msd <- gophr::read_psd(file) %>%  filter(
   select(operatingunit, country, partner, mech_code, mech_name, award_number, fy) %>% 
   group_by_all() %>% summarise(.groups = "drop") %>% glimpse()
 
+
+rp_mechs <- msd %>% filter(str_detect(operatingunit , "Region"),
+               str_detect(mech_name, "EpiC|Epic|EAWA"),
+               ) %>% count(operatingunit, country, mech_code) %>% 
+  select(country, mech_code)
