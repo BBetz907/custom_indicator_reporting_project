@@ -8,7 +8,7 @@ keypop <- c("FSW","MSM","PWID","TG","Prison")
 
 
 # Select Current Quarter --------------------------------------------------
-current_q <- "fy24_q3"
+current_q <- "fy24_q4"
 currentq <- toupper(str_replace_all(current_q, "_", " "))
 
 # identify files ----------------------------------------------------------
@@ -18,7 +18,9 @@ kp_disaggs_counts <- files %>% keep(grepl("kp_disaggs_counts", files))
 age_sex_counts <- files %>% keep(grepl("age_sex_counts", files))
 age_sex_snapshots <- files %>% keep(grepl("snapshot", files))
 
-#KP disaggs cleaning
+
+# read and clean -------------
+## KP disaggs -------------
 kp_disaggs_counts <- read.csv(kp_disaggs_counts)
 
 kp_disaggs_counts_clean <- kp_disaggs_counts %>% janitor::clean_names() %>% 
@@ -42,11 +44,9 @@ kp_disaggs_counts_clean <- kp_disaggs_counts %>% janitor::clean_names() %>%
   dplyr::group_by(reportingperiod, country, snu_1, snu_2, snu_3, snu_4, snu_1_id, snu_2_id, snu_3_id, snu_4_id, indicator, otherdisaggregate, population, numdenom) %>%
   dplyr::summarise(value = sum(value), .groups = "drop")
 
-#Age and Sex cleaning
+## Age and Sex counts ---------------------
 
-age_sex_counts <- read.csv(age_sex_counts)
-
-age_sex_counts_clean <- age_sex_counts %>% janitor::clean_names() %>% 
+age_sex_counts_clean <- map_dfr(age_sex_counts, read_csv) %>% janitor::clean_names() %>% 
   dplyr::rename(indicator = indicators, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
   separate(indicator, c("indicator", "numdenom"), sep = "[ ]") %>%
@@ -71,7 +71,7 @@ age_sex_counts_clean <- age_sex_counts %>% janitor::clean_names() %>%
   dplyr::group_by(reportingperiod, country,  snu_1, snu_2, snu_3, snu_4, snu_1_id, snu_2_id, snu_3_id, snu_4_id, indicator, sex, age, numdenom) %>%
   dplyr::summarise(value = sum(value), .groups = "drop")
 
-
+## age-sex snapshots ----------------
 age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% janitor::clean_names() %>%
   dplyr::rename(indicator = indicators, otherdisaggregate = pepfar, age = all_age_groups) %>%
   unite(reportingperiod, c("fiscal_year_short_name","fiscal_quarter"), sep = " Q") %>%
@@ -101,7 +101,7 @@ age_sex_snapshot_clean <- map_dfr(age_sex_snapshots, read_csv) %>% janitor::clea
   dplyr::summarise(value = sum(value), .groups = "drop")
 
 
-#merge all three files
+# merge all three files ---------------------
 complete_clean_data_pre_mech <- bind_rows(age_sex_counts_clean, age_sex_snapshot_clean, kp_disaggs_counts_clean) %>% 
   mutate(country = recode(country, "Cote dIvoire" = "Cote d'Ivoire"),
          indicator = recode(indicator, "TX_PVLS_ELIGIBLE_VERIFY" = "TX_PVLS_ELIGIBLE")) %>%
